@@ -142,6 +142,10 @@ def plot_errors(errors):
     plt.show()
 
 def plot_decision_regions(X, y, model, resolution=0.02):
+    """
+    일단 xx1, xx2를 구한다. 이는 점들이 깔린 사각형 평면의 면적을 구하는 작업임
+    그리고, 모델을 이용해서 예측 값을 구한다. 결정 바운더리를 그리기 위함
+    """
     markers = ('s'  , 'x'   , 'o'           , '^'       , 'v')
     colors  = ('red', 'blue', 'lightgreen'  , 'gray'   , 'cyan')
     cmap    = ListedColormap(colors[:len(np.unique(y))])
@@ -151,9 +155,29 @@ def plot_decision_regions(X, y, model, resolution=0.02):
     x2_min = X[:, 1].min() - 1
     x2_max = X[:, 1].max() + 1
 
+    """
+    np.arange(start, stop, step)
+        start 부터 stop 까지, step으로 잘게 쪼갠 리스트를 반환
+        start는 옵션임, stop만 주어진 경우 start는 0으로 간주됨
+
+        np.arange(1, 10, 2)
+        [1, 3, 5, 7, 9]
+
+    np.meshgrid(*xi)
+        https://stackoverflow.com/questions/36013063/what-is-the-purpose-of-meshgrid-in-python-numpy
+
+    np.ravel(a)
+        1차원 배열화 하는 것으로, reshape(-1)과 동일
+    """
     xx1, xx2 = np.meshgrid(np.arange(x1_min, x1_max, resolution),
                            np.arange(x2_min, x2_max, resolution))
 
+    """
+    X 와 y는 학습시 사용된 데이터로,
+    이번 예측에서는 무작위로 생성된 데이터포인트를 사용함 (xx1과 xx2를 이어붙인 배열)
+
+    학습 결과를 xx1에 맞는 형태로 재배열
+    """
     Z = model.predict(np.array([xx1.ravel(), xx2.ravel()]).T)
     Z = Z.reshape(xx1.shape)
 
